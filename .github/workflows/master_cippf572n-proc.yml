@@ -1,0 +1,40 @@
+# Docs for the Azure Web Apps Deploy action: https://github.com/azure/functions-action
+# More GitHub Actions for Azure: https://github.com/Azure/actions
+
+name: Build and deploy Powershell project to Azure Function App - cippf572n-proc
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+env:
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: '.' # set this to the path to your web app project, defaults to the repository root
+
+jobs:
+  deploy:
+    runs-on: windows-latest
+    permissions:
+      id-token: write #This is required for requesting the JWT
+      contents: read #This is required for actions/checkout
+
+    steps:
+      - name: 'Checkout GitHub Action'
+        uses: actions/checkout@v4
+      
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_489A27566B4246638D446B08DD2F3F24 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_F027E48AECE3419EAF5757F2F38A3EE4 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_B0E5F1D9390C43439B10512016DDCB52 }}
+
+      - name: 'Run Azure Functions Action'
+        uses: Azure/functions-action@v1
+        id: fa
+        with:
+          app-name: 'cippf572n-proc'
+          slot-name: 'Production'
+          package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
+          
